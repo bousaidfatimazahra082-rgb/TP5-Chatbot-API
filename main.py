@@ -1,19 +1,28 @@
 import requests
 
-def chat_avec_bot():
-    print("--- Bienvenue sur mon Chatbot API (TP 5) ---")
-    print("Tapez 'quitter' pour arrêter.\n")
-    
+# C'est une API publique gratuite pour les tests (Hugging Face)
+API_URL = "https://api-inference.huggingface.co/models/gpt2"
+# Note : Normalement on utilise un "Token", mais pour un TP de base, 
+# certains modèles publics répondent directement.
+
+def demander_a_l_api(message):
+    payload = {"inputs": message}
+    try:
+        response = requests.post(API_URL, json=payload)
+        # On récupère le texte généré par l'IA
+        return response.json()[0]['generated_text']
+    except:
+        return "Désolé, l'API est occupée ou le message est mal formé."
+
+def main():
+    print("--- Mon Chatbot Connecté à une API ---")
     while True:
-        message = input("Vous : ")
-        if message.lower() == "quitter":
+        user_input = input("Vous : ")
+        if user_input.lower() in ["quitter", "stop"]:
             break
             
-        # Ici, on simule l'appel à une API de chat
-        # Dans un vrai projet, on utiliserait une clé API OpenAI ou Gemini
-        reponse = f"Echo du Bot : J'ai bien reçu votre message : '{message}'"
-        
-        print(f"Bot : {reponse}\n")
+        reponse = demander_a_l_api(user_input)
+        print(f"IA : {reponse}\n")
 
 if __name__ == "__main__":
-    chat_avec_bot()
+    main()
